@@ -2,7 +2,9 @@
 
 /* global stuff */
 
-* {
+*,
+*::after,
+*::before {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -88,7 +90,7 @@ body {
     --angle: 0;
     --angle2: 0;
     transform: rotateY(calc(var(--angle2) * 1deg));
-    transition: transform 100ms linear;
+    transition: transform 500ms ease-out;
 }
 
 /* rotate cube around */
@@ -101,6 +103,8 @@ body {
         transform: rotateY(360deg);
     }
 }
+
+// point 4d
 
 .point4d {
     --rotated-c: calc(var(--c) * var(--cos) - var(--d) * var(--sin));
@@ -119,7 +123,7 @@ body {
         translateY(calc(var(--y) * var(--size) - 50%))
         translateZ(calc(var(--z) * var(--size)))
         rotateY(calc(-1 * var(--angle2) * 1deg));
-    transition: transform 100ms linear;
+    transition: inherit;
 }
 
 /* point animation */
@@ -137,44 +141,30 @@ body {
     }
 }
 
-/* areas */
+/* areas to control the angles */
 
-$number: 100;
+$number: 20;
 
-.area1 {
-    display: none;
-    --area-width: calc(100vw / #{$number});
+.area {
     position: fixed;
-    width: var(--area-width);
-    top: 0;
-    bottom: 0;
+    --width: calc(100vw / #{$number});
+    --height: calc(100vh / #{$number});
+    width: var(--width);
+    height: var(--height);
     z-index: 10;
+    border: 1px solid blue;
+    opacity: 0.2;
 }
 
-@for $i from 1 through $number {
-    .area1:nth-of-type(#{$i}) {
-        left: calc(#{$i - 1} * var(--area-width));
-        &:hover ~ #cube {
-            --angle: #{math.div(($i - 1) * math.$pi, $number)};
+@for $i from 0 to $number {
+    @for $j from 0 to $number {
+        .area:nth-of-type(#{$i * $number + $j + 1}) {
+            left: calc(#{$i} * var(--width));
+            top: calc(#{$j} * var(--height));
         }
-    }
-}
-
-.area2 {
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    right: 0;
-    top: 100px;
-    --area-height: calc(100vh / #{$number});
-    height: var(--area-height);
-}
-
-@for $i from 1 through $number {
-    .area2:nth-of-type(#{$i}) {
-        top: calc(#{$i - 1} * var(--area-height));
-        &:hover ~ #cube {
-            --angle2: #{math.div(($i - 1) * 360, $number)};
+        .area:nth-of-type(#{$i * $number + $j + 1}):hover ~ #cube {
+            --angle: #{$i * 2 * math.$pi / $number};
+            --angle2: #{$j * 360 / $number};
         }
     }
 }
