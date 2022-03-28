@@ -1,0 +1,13 @@
+{
+  "name": "hypercubecss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "sass ./src/style.scss ./public/css/style.css",
+    "dev": "sass ./src/style.scss ./public/css/style.css --watch"
+  },
+  "keywords": [],
+  "author": "Script Raccoon",
+  "license": "ISC"
+}

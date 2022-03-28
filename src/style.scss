@@ -1,0 +1,64 @@
+@use "sass:math";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    --speed: 20s;
+    --point-radius: 10px;
+    --size: min(200px, 20vw);
+    --distance4d: 2.2;
+    perspective: calc(4 * var(--size));
+    background-color: black;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    overflow: hidden;
+}
+
+@keyframes rotatearound {
+    from {
+        transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+#cube {
+    position: relative;
+    transform-style: preserve-3d;
+    animation: rotatearound var(--speed) linear infinite forwards;
+}
+
+@keyframes point-animation {
+    from {
+        transform: translateX(calc(var(--x) * var(--size) - 50%))
+            translateY(calc(var(--y) * var(--size) - 50%))
+            translateZ(calc(var(--z) * var(--size)));
+    }
+    to {
+        transform: translateX(calc(var(--x) * var(--size) - 50%))
+            translateY(calc(var(--y) * var(--size) - 50%))
+            translateZ(calc(var(--z) * var(--size))) rotateY(-360deg);
+    }
+}
+
+.point4d {
+    --angle: 1;
+    --factor: calc(1 / (var(--distance4d) - var(--d)));
+    --x: calc(var(--factor) * var(--a));
+    --y: calc(var(--factor) * var(--b));
+    --z: calc(var(--factor) * var(--c));
+    position: absolute;
+    width: calc(2 * var(--point-radius));
+    height: calc(2 * var(--point-radius));
+    background: radial-gradient(yellow, green);
+    border-radius: 50%;
+    animation: point-animation var(--speed) linear infinite forwards;
+}
