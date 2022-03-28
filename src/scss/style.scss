@@ -86,6 +86,9 @@ body {
     transform-style: preserve-3d;
     /* animation: rotatearound var(--speed) linear infinite forwards; */
     --angle: 0;
+    --angle2: 0;
+    transform: rotateY(calc(var(--angle2) * 1deg));
+    transition: transform 100ms linear;
 }
 
 /* rotate cube around */
@@ -114,8 +117,9 @@ body {
     /* animation: point-animation var(--speed) linear infinite forwards; */
     transform: translateX(calc(var(--x) * var(--size) - 50%))
         translateY(calc(var(--y) * var(--size) - 50%))
-        translateZ(calc(var(--z) * var(--size)));
-    transition: transform 50ms linear;
+        translateZ(calc(var(--z) * var(--size)))
+        rotateY(calc(-1 * var(--angle2) * 1deg));
+    transition: transform 100ms linear;
 }
 
 /* point animation */
@@ -137,7 +141,8 @@ body {
 
 $number: 100;
 
-.area {
+.area1 {
+    display: none;
     --area-width: calc(100vw / #{$number});
     position: fixed;
     width: var(--area-width);
@@ -147,10 +152,29 @@ $number: 100;
 }
 
 @for $i from 1 through $number {
-    .area:nth-of-type(#{$i}) {
+    .area1:nth-of-type(#{$i}) {
         left: calc(#{$i - 1} * var(--area-width));
         &:hover ~ #cube {
             --angle: #{math.div(($i - 1) * math.$pi, $number)};
+        }
+    }
+}
+
+.area2 {
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    right: 0;
+    top: 100px;
+    --area-height: calc(100vh / #{$number});
+    height: var(--area-height);
+}
+
+@for $i from 1 through $number {
+    .area2:nth-of-type(#{$i}) {
+        top: calc(#{$i - 1} * var(--area-height));
+        &:hover ~ #cube {
+            --angle2: #{math.div(($i - 1) * 360, $number)};
         }
     }
 }
