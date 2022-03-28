@@ -50,11 +50,21 @@ body {
 }
 
 .point4d {
-    --angle: 1;
-    --factor: calc(1 / (var(--distance4d) - var(--d)));
+    $angle: 0.4;
+    --rotated-c: calc(
+        var(--c) * #{math.cos($angle)} - var(--d) * #{math.sin(
+                $angle
+            )}
+    );
+    --rotated-d: calc(
+        var(--c) * #{math.sin($angle)} + var(--d) * #{math.cos(
+                $angle
+            )}
+    );
+    --factor: calc(1 / (var(--distance4d) - var(--rotated-d)));
     --x: calc(var(--factor) * var(--a));
     --y: calc(var(--factor) * var(--b));
-    --z: calc(var(--factor) * var(--c));
+    --z: calc(var(--factor) * var(--rotated-c));
     position: absolute;
     width: calc(2 * var(--point-radius));
     height: calc(2 * var(--point-radius));
