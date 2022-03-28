@@ -1,0 +1,156 @@
+@use "sass:math";
+
+/* global stuff */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    --speed: 20s;
+    --point-radius: 10px;
+    --size: min(200px, 20vw);
+    --distance4d: 2.2;
+    perspective: calc(4 * var(--size));
+    background-color: black;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    overflow: hidden;
+}
+
+/* trig functions (approximation) */
+
+.trig {
+    --sin-term1: var(--angle);
+    --sin-term2: calc(
+        (var(--angle) * var(--angle) * var(--angle)) / 6
+    );
+    --sin-term3: calc(
+        (
+                var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle)
+            ) / 120
+    );
+    --sin-term4: calc(
+        (
+                var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle)
+            ) / 5040
+    );
+    --sin-term5: calc(
+        (
+                var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle) * var(--angle)
+            ) / 362880
+    );
+    --sin: calc(
+        var(--sin-term1) - var(--sin-term2) + var(--sin-term3) -
+            var(--sin-term4) + var(--sin-term5)
+    );
+    --cos-term1: 1;
+    --cos-term2: calc((var(--angle) * var(--angle)) / 2);
+    --cos-term3: calc(
+        (var(--angle) * var(--angle) * var(--angle) * var(--angle)) /
+            24
+    );
+    --cos-term4: calc(
+        (
+                var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle) * var(--angle)
+            ) / 720
+    );
+    --cos-term5: calc(
+        (
+                var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle) * var(--angle) *
+                    var(--angle) * var(--angle)
+            ) / 40320
+    );
+    --cos: calc(
+        var(--cos-term1) - var(--cos-term2) + var(--cos-term3) -
+            var(--cos-term4) + var(--cos-term5)
+    );
+}
+
+/* cube */
+
+#cube {
+    position: relative;
+    transform-style: preserve-3d;
+    /* animation: rotatearound var(--speed) linear infinite forwards; */
+    --angle: 0;
+}
+
+/* rotate cube around */
+
+@keyframes rotatearound {
+    from {
+        transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+.point4d {
+    --rotated-c: calc(var(--c) * var(--cos) - var(--d) * var(--sin));
+    --rotated-d: calc(var(--c) * var(--sin) + var(--d) * var(--cos));
+    --factor: calc(1 / (var(--distance4d) - var(--rotated-d)));
+    --x: calc(var(--factor) * var(--a));
+    --y: calc(var(--factor) * var(--b));
+    --z: calc(var(--factor) * var(--rotated-c));
+    position: absolute;
+    width: calc(2 * var(--point-radius));
+    height: calc(2 * var(--point-radius));
+    background: radial-gradient(yellow, green);
+    border-radius: 50%;
+    /* animation: point-animation var(--speed) linear infinite forwards; */
+    transform: translateX(calc(var(--x) * var(--size) - 50%))
+        translateY(calc(var(--y) * var(--size) - 50%))
+        translateZ(calc(var(--z) * var(--size)));
+    transition: transform 50ms linear;
+}
+
+/* point animation */
+
+@keyframes point-animation {
+    from {
+        transform: translateX(calc(var(--x) * var(--size) - 50%))
+            translateY(calc(var(--y) * var(--size) - 50%))
+            translateZ(calc(var(--z) * var(--size)));
+    }
+    to {
+        transform: translateX(calc(var(--x) * var(--size) - 50%))
+            translateY(calc(var(--y) * var(--size) - 50%))
+            translateZ(calc(var(--z) * var(--size))) rotateY(-360deg);
+    }
+}
+
+/* areas */
+
+$number: 100;
+
+.area {
+    --area-width: calc(100vw / #{$number});
+    position: fixed;
+    width: var(--area-width);
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+@for $i from 1 through $number {
+    .area:nth-of-type(#{$i}) {
+        left: calc(#{$i - 1} * var(--area-width));
+        &:hover ~ #cube {
+            --angle: #{math.div(($i - 1) * math.$pi, $number)};
+        }
+    }
+}
