@@ -1,6 +1,8 @@
+// imports
+
 @use "sass:math";
 
-/* global stuff */
+// global stuff
 
 *,
 *::after,
@@ -11,11 +13,10 @@
 }
 
 body {
-    --speed: 20s;
-    --point-radius: 10px;
-    --size: min(200px, 20vw);
+    --cube-size: min(200px, 20vw);
     --distance4d: 2.2;
-    perspective: calc(4 * var(--size));
+    --point-size: 25px;
+    perspective: calc(4 * var(--cube-size));
     background-color: black;
     min-height: 100vh;
     display: flex;
@@ -25,7 +26,7 @@ body {
     overflow: hidden;
 }
 
-/* trig functions (approximation) */
+// trig functions (approximation)
 
 .trig {
     --sin-term1: var(--angle);
@@ -81,27 +82,15 @@ body {
     );
 }
 
-/* cube */
+// cube
 
 #cube {
-    position: relative;
-    transform-style: preserve-3d;
-    /* animation: rotatearound var(--speed) linear infinite forwards; */
     --angle: 0;
     --angle2: 0;
+    position: relative;
+    transform-style: preserve-3d;
     transform: rotateY(calc(var(--angle2) * 1deg));
-    transition: transform 500ms ease-out;
-}
-
-/* rotate cube around */
-
-@keyframes rotatearound {
-    from {
-        transform: rotateY(0deg);
-    }
-    to {
-        transform: rotateY(360deg);
-    }
+    transition: transform 800ms ease-out;
 }
 
 // point 4d
@@ -114,34 +103,19 @@ body {
     --y: calc(var(--factor) * var(--b));
     --z: calc(var(--factor) * var(--rotated-c));
     position: absolute;
-    width: calc(2 * var(--point-radius));
-    height: calc(2 * var(--point-radius));
-    background: radial-gradient(yellow, green);
+    width: var(--point-size);
+    height: var(--point-size);
     border-radius: 50%;
-    /* animation: point-animation var(--speed) linear infinite forwards; */
-    transform: translateX(calc(var(--x) * var(--size) - 50%))
-        translateY(calc(var(--y) * var(--size) - 50%))
-        translateZ(calc(var(--z) * var(--size)))
+    background: radial-gradient(yellow, green);
+    box-shadow: 0px 0px 10px #fff5;
+    transform: translateX(calc(var(--x) * var(--cube-size) - 50%))
+        translateY(calc(var(--y) * var(--cube-size) - 50%))
+        translateZ(calc(var(--z) * var(--cube-size)))
         rotateY(calc(-1 * var(--angle2) * 1deg));
     transition: inherit;
 }
 
-/* point animation */
-
-@keyframes point-animation {
-    from {
-        transform: translateX(calc(var(--x) * var(--size) - 50%))
-            translateY(calc(var(--y) * var(--size) - 50%))
-            translateZ(calc(var(--z) * var(--size)));
-    }
-    to {
-        transform: translateX(calc(var(--x) * var(--size) - 50%))
-            translateY(calc(var(--y) * var(--size) - 50%))
-            translateZ(calc(var(--z) * var(--size))) rotateY(-360deg);
-    }
-}
-
-/* areas to control the angles */
+// areas to control the angles
 
 $number: 20;
 
@@ -152,8 +126,6 @@ $number: 20;
     width: var(--width);
     height: var(--height);
     z-index: 10;
-    border: 1px solid blue;
-    opacity: 0.2;
 }
 
 @for $i from 0 to $number {
@@ -161,10 +133,10 @@ $number: 20;
         .area:nth-of-type(#{$i * $number + $j + 1}) {
             left: calc(#{$i} * var(--width));
             top: calc(#{$j} * var(--height));
-        }
-        .area:nth-of-type(#{$i * $number + $j + 1}):hover ~ #cube {
-            --angle: #{$i * 2 * math.$pi / $number};
-            --angle2: #{$j * 360 / $number};
+            &:hover ~ #cube {
+                --angle: #{math.div($i * 2 * math.$pi, $number)};
+                --angle2: #{math.div($j * 360, $number)};
+            }
         }
     }
 }
