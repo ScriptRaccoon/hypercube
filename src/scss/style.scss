@@ -107,7 +107,6 @@ body {
     height: var(--point-size);
     border-radius: 50%;
     background: radial-gradient(yellow, green);
-    box-shadow: 0px 0px 10px #fff5;
     transform: translateX(calc(var(--x) * var(--cube-size) - 50%))
         translateY(calc(var(--y) * var(--cube-size) - 50%))
         translateZ(calc(var(--z) * var(--cube-size)))
@@ -134,8 +133,9 @@ $number: 20;
             left: calc(#{$i} * var(--width));
             top: calc(#{$j} * var(--height));
             &:hover ~ #cube {
-                --angle: #{math.div($i * 2 * math.$pi, $number)};
-                --angle2: #{math.div($j * 360, $number)};
+                // TODO: fix the bug with --angle when $i >= 16 (how?)
+                --angle: #{math.div($i * 2 * math.$pi , $number)};
+                 --angle2: #{math.div($j * 360, $number)};
             }
         }
     }
