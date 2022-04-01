@@ -9,5 +9,8 @@
     },
     "keywords": [],
     "author": "Script Raccoon",
-    "license": "ISC"
+    "license": "ISC",
+    "devDependencies": {
+        "sass": "^1.49.10"
+    }
 }
